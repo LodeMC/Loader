@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'net.shadew.lode'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://maven.shadew.net/"
+    }
+}
+
+task sourceJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+
+dependencies {
+    compile 'net.shadew:shwutil:1.1'
+    compile 'org.ow2.asm:asm:8.0.1'
+    compile 'org.ow2.asm:asm-tree:8.0.1'
+}
+
+publishing {
+    publications {
+        maven( MavenPublication ) {
+            groupId = project.group
+            artifactId = 'lode-loader'
+            version = project.version
+
+            from components.java
+            artifact tasks.sourceJar
+        }
+    }
+    repositories {
+        maven {
+            name = "ShwMaven"
+            url = uri( "http://maven.shadew.net/" )
+            credentials {
+                username = shwMavenUser
+                password = shwMavenPass
+            }
+        }
+    }
+}
